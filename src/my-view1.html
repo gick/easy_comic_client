@@ -10,7 +10,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/vaadin-upload/vaadin-upload.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
-
 <link rel="import" href="./element/helperElements/genericList.html">
 <link rel="import" href="shared-styles.html">
 <dom-module id="my-view1">
@@ -22,13 +21,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             padding: 10px;
         }
         </style>
-
         <div class="card">
-                <paper-button class="pink">link</paper-button>
-<paper-button raised class="indigo">raised</paper-button>
-
-            <div class="circle">1</div>
-            <h1>View One</h1>
             <vaadin-upload target="/image" method="POST" id="uploader">
             </vaadin-upload>
             <generic-list id="listBox"></generic-list>
@@ -36,11 +29,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </template>
     <script>
     class MyView1 extends Polymer.Element {
-        ready(){
+        ready() {
             super.ready()
-            this.$.uploader.addEventListener('upload-response',e=>{this._loadImages(e)})
+            this.$.uploader.addEventListener('upload-response', e => { this._loadImages(e) })
         }
-        _loadImages(e){
+        _loadImages(e) {
             this.$.listBox.getElements()
         }
         static get is() { return 'my-view1'; }

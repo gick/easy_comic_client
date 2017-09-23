@@ -19,6 +19,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </template>
     <script>
     class GenericList extends Polymer.Element {
+        ready(){
+            super.ready()
+            this.addEventListener('resource-operation', e => this.getElements());
+
+            this.getElements()
+        }
         static get is() { return 'generic-list'; }
         getElements(){
             this.$.loader.generateRequest()
