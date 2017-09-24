@@ -11,6 +11,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/vaadin-upload/vaadin-upload.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="./element/helperElements/genericList.html">
+<link rel="import" href="./element/comicElements/comicStrip.html">
+
 <link rel="import" href="shared-styles.html">
 <dom-module id="my-view1">
     <template>
@@ -26,15 +28,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </vaadin-upload>
             <generic-list id="listBox"></generic-list>
         </div>
+        <div class="card">
+            <comic-strip id="strip">
+            </comic-strip>
+        </div>
     </template>
     <script>
     class MyView1 extends Polymer.Element {
         ready() {
             super.ready()
             this.$.uploader.addEventListener('upload-response', e => { this._loadImages(e) })
+            this.$.listBox.addEventListener('strip-operation',e=>{this._stripOperation(e)})
         }
         _loadImages(e) {
             this.$.listBox.getElements()
+        }
+        _stripOperation(e){
+            this.$.strip.addBox(e.detail.id)
         }
         static get is() { return 'my-view1'; }
     }

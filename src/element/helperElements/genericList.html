@@ -14,7 +14,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <template>
         <iron-ajax id="loader" url="/listImages" handle-as="json" last-response="{{items}}"></iron-ajax>
         <template is="dom-repeat" items="{{items}}">
-            <comic-box id="[[item._id]]"></comic-box>
+            <comic-box id="[[item._id]]" boxdata="[[item.metadata]]"></comic-box>
         </template>
     </template>
     <script>

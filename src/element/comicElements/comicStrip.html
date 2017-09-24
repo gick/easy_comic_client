@@ -1,0 +1,76 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../../bower_components/marked-element/marked-element.html">
+<link rel="import" href="../../../bower_components/iron-demo-helpers/demo-snippet.html">
+<link rel="import" href="../../../bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
+<link rel="import" href="../helperElements/resourceOperation.html">
+<dom-module id="comic-strip">
+    <template>
+        <style include="demo-pages-shared-styles">
+        img {
+            width: 300px;
+        }
+        </style>
+        <div style="display:flex;padding:10px;    box-shadow: 10px 10px 5px #888888;">
+            <paper-card heading="Comic parameters" elevation="4">
+                <div class="card-content">
+                    <paper-input label="Number of column" value="deded"></paper-input>
+                </div>
+            </paper-card>
+            <paper-card heading="Comic strip" elevation="4">
+                <div class="card-content">
+                    <marked-element breaks=true markdown="[[mkdown]]">
+                        <div slot="markdown-html"></div>
+                    </marked-element>
+                </div>
+                <div class="card-actions">
+                    <paper-button on-click="removeBox">Export</paper-button>
+                </div>
+            </paper-card>
+    </template>
+    </div>
+    <script>
+    class ComicStrip extends Polymer.Element {
+        addBox(boxId) {
+            if (this.col == 0) {
+                this.col = 3
+                var mkdownString = "\n" + "|![data](/file/" + boxId + ")|"
+                this.mkdown = this.mkdown + mkdownString
+
+            } else {
+                var mkdownString = "|![data](/file/" + boxId + ")|"
+                this.mkdown = this.mkdown + mkdownString
+            }
+            this.col = this.col - 1
+
+        }
+        ready() {
+            super.ready()
+            this.mkdown = "|         |            |        |" + "\n" + "| ------------- |:-------------:| -----:|" + "\n"
+            this.set('col', 3)
+        }
+        static get is() { return 'comic-strip'; }
+        static get properties() {
+            return {
+                id: String,
+                stripBoxes: Object,
+            };
+        }
+    }
+
+    window.customElements.define(ComicStrip.is, ComicStrip);
+    </script>
+</dom-module>

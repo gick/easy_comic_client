@@ -9,9 +9,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="../../../bower_components/iron-demo-helpers/demo-snippet.html">
 <link rel="import" href="../../../bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
 <link rel="import" href="../helperElements/resourceOperation.html">
@@ -22,30 +24,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </style>
         <resource-operation id="operation" resource-url="/file" resource-id="{{id}}" operation="DELETE"></resource-operation>
         <div style="display:inline-flex;padding:10px;    box-shadow: 10px 10px 5px #888888;">
-        <template is="dom-if" if="{{id}}" restamp>
-
-            <paper-card heading="Case" elevation="4">
-                <div class="card-content">
-                    <iron-image style="width:300px; height:300px;" sizing="contain" src="/file/{{id}}"></iron-image>
-                </div>
-                <div class="card-actions">
-                    <paper-button>Modify</paper-button>
-                    <paper-button on-click="removeBox">Remove</paper-button>
-                    <paper-checkbox>Original</paper-checkbox>
-                </div>
-            </paper-card>
-        </template>
+            <template is="dom-if" if="{{id}}" restamp>
+                <paper-card heading="Case" elevation="4">
+                    <div class="card-content">
+                        <iron-collapse style="display:flex;flex-direction: row;" opened="[[updating]]">
+                            <div>
+                                <iron-image style="width:300px; height:300px;" sizing="contain" src="/file/{{boxdata.original}}"></iron-image>
+                            </div>
+                            <div>
+                                <input placeholder="dedeedede" label="Exctract value">
+                                </paper>
+                            </div>
+                        </iron-collapse>
+                        <iron-image style="width:300px; height:300px;" on-click="addToStrip" sizing="contain" src="/file/{{id}}"></iron-image>
+                    </div>
+                    <div class="card-actions">
+                        <paper-checkbox checked="{{updating}}">Modify</paper-checkbox>
+                        <paper-button on-click="removeBox">Remove</paper-button>
+                    </div>
+                </paper-card>
+            </template>
     </template>
     </div>
     <script>
     class ComicBox extends Polymer.Element {
-        removeBox(){
-          this.$.operation.performOperation()
+        addToStrip() {
+            this.dispatchEvent(new CustomEvent('strip-operation', { detail:{operation: 'add', id: this.id} ,bubbles: true, composed: true}));
+
+        }
+        removeBox() {
+            this.$.operation.performOperation()
         }
         static get is() { return 'comic-box'; }
         static get properties() {
             return {
                 id: String,
+                boxdata: Object,
             };
         }
     }
