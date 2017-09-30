@@ -17,44 +17,77 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../../bower_components/iron-demo-helpers/demo-snippet.html">
 <link rel="import" href="../../../bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
 <link rel="import" href="../helperElements/resourceOperation.html">
-<dom-module id="comic-box">
+<dom-module id="comic-strip-box">
     <template>
         <style include="demo-pages-shared-styles">
+         :host {
+            flex: 1;
+            min-width: 300px;
+            min-height: 100px;
+        }
 
+        .selected {
+            height: 10px;
+            background: red;
+            border: 5px solid blue
+        }
+
+        .normal {
+            height: 10px;
+            background: red;
+            border: 5px solid white
+        }
         </style>
-        <resource-operation id="operation" resource-url="/file" resource-id="{{id}}" operation="DELETE"></resource-operation>
-        <div style="display:inline-flex;padding:10px;    box-shadow: 10px 10px 5px #888888;">
-            <template is="dom-if" if="{{id}}" restamp>
-                <paper-card heading="Case" elevation="4">
-                    <div class="card-content">
-                        <iron-image style="width:300px; height:300px;" on-click="addToStrip" sizing="contain" src="/file/{{id}}"></iron-image>
-                    </div>
-                    <div class="card-actions">
-                        <paper-checkbox checked="{{updating}}">Modify</paper-checkbox>
-                        <paper-button on-click="removeBox">Remove</paper-button>
-                    </div>
-                </paper-card>
-            </template>
+        <div class$="[[current]]">
+            <image style="width:100%" sizing="contain" src="/file/{{id}}">
+        </div>
     </template>
-    </div>
     <script>
-    class ComicBox extends Polymer.Element {
+    class ComicStripBox extends Polymer.Element {
         addToStrip() {
-            this.dispatchEvent(new CustomEvent('strip-operation', { detail:{operation: 'add', id: this.id} ,bubbles: true, composed: true}));
+            this.dispatchEvent(new CustomEvent('strip-operation', { detail: { operation: 'add', id: this.id }, bubbles: true, composed: true }));
 
+        }
+        _itemSelected(val) {
+            if (val)
+                this.current = 'selected'
+            else
+                this.current = 'normal'
+        }
+        _setImage(id) {
+            if (id) {
+                this.set('id', id)
+                this.set('noId', false)
+            }
+        }
+        ready() {
+            super.ready()
+            this.set('noId', true)
+            this.current = 'normal'
         }
         removeBox() {
             this.$.operation.performOperation()
         }
-        static get is() { return 'comic-box'; }
+        static get is() { return 'comic-strip-box'; }
         static get properties() {
             return {
-                id: String,
+                noId: {
+                    type: Boolean,
+                    value: true,
+                },
                 boxdata: Object,
+                image: {
+                    type: String,
+                    observer: '_setImage'
+                },
+                selected: {
+                    type: Boolean,
+                    observer: '_itemSelected'
+                },
             };
         }
     }
 
-    window.customElements.define(ComicBox.is, ComicBox);
+    window.customElements.define(ComicStripBox.is, ComicStripBox);
     </script>
 </dom-module>

@@ -35,7 +35,8 @@
     "iron-fit-behavior": "PolymerElements/iron-fit-behavior#2.0.0",
     "iron-form": "PolymerElements/iron-form#2.0.1",
     "iron-icon": "PolymerElements/iron-icon#2.0.1",
-    "iron-input": "PolymerElements/iron-input#2.0.1"
+    "iron-input": "PolymerElements/iron-input#2.0.1",
+    "paper-slider": "PolymerElements/paper-slider#2.0.2"
   },
   "resolutions": {
     "polymer": "^2.0.0",

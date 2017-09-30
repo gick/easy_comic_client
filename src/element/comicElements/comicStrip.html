@@ -13,60 +13,71 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../../bower_components/iron-image/iron-image.html">
-<link rel="import" href="../../../bower_components/marked-element/marked-element.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../../bower_components/iron-demo-helpers/demo-snippet.html">
+<link rel="import" href="../../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="../../../bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
 <link rel="import" href="../helperElements/resourceOperation.html">
+<link rel="import" href="./comicStripBox.html">
 <dom-module id="comic-strip">
     <template>
-        <style include="demo-pages-shared-styles">
-        img {
-            width: 300px;
-        }
-        </style>
-        <div style="display:flex;padding:10px;    box-shadow: 10px 10px 5px #888888;">
-            <paper-card heading="Comic parameters" elevation="4">
-                <div class="card-content">
-                    <paper-input label="Number of column" value="deded"></paper-input>
-                </div>
-            </paper-card>
-            <paper-card heading="Comic strip" elevation="4">
-                <div class="card-content">
-                    <marked-element breaks=true markdown="[[mkdown]]">
-                        <div slot="markdown-html"></div>
-                    </marked-element>
-                </div>
-                <div class="card-actions">
-                    <paper-button on-click="removeBox">Export</paper-button>
-                </div>
-            </paper-card>
+    <div style="display:block;width:100%">
+        <paper-button on-click="toggle">toggle collapse</paper-button>
+        <iron-collapse id="collapse">
+            <div style="display:block;width:100%;">
+                <paper-slider id="slider" min='10' max='70' value="{{currentMinWidth}}"></paper-slider>
+                <paper-button on-click="addBox">Add box</paper-button>
+            </div>
+        </iron-collapse>
+     </div>   
+        <template is="dom-repeat" id="boxesList" items={{boxes}}>
+            <comic-strip-box style$="min-width:[[item.boxMinWidth]]" image=[[item.image]] selected="{{item.selected}}" on-click="selectBox"></comic-strip-box>
+        </template>
+        <array-selector id="selector" items="{{boxes}}" selected="{{selected}}" toggle></array-selector>
     </template>
-    </div>
     <script>
     class ComicStrip extends Polymer.Element {
-        addBox(boxId) {
-            if (this.col == 0) {
-                this.col = 3
-                var mkdownString = "\n" + "|![data](/file/" + boxId + ")|"
-                this.mkdown = this.mkdown + mkdownString
-
-            } else {
-                var mkdownString = "|![data](/file/" + boxId + ")|"
-                this.mkdown = this.mkdown + mkdownString
-            }
-            this.col = this.col - 1
-
-        }
         ready() {
             super.ready()
-            this.mkdown = "|         |            |        |" + "\n" + "| ------------- |:-------------:| -----:|" + "\n"
-            this.set('col', 3)
+            this.boxes = [{ selected: false, boxMinWidth: '10%' }, { selected: false,boxMinWidth: '10%' }]
+            this.set('currentMinWidth', 100)
+            this.$.slider.addEventListener('value-changed',this.setBoxWidth.bind(this))
+        }
+        toggle() {
+            this.$.collapse.toggle()
+        }
+        setImage(id){
+            if(this.selected){
+                this.set('selected.image',id)
+            }
+        }
+        setBoxWidth(e){
+            var newWidth=e.detail.value
+            if(this.selected){
+                this.set('selected.boxMinWidth',newWidth+'%;')
+            }
+        }
+        selectBox(event) {
+           // this.set('currentMinWidth',event.model.item.boxMinWidth)
+            if (!event.model.item.selected) {
+                for (var i = 0; i < this.boxes.length; i++) {
+                    this.set('boxes.' + i, { selected: false,boxMinWidth:this.boxes[i].boxMinWidth })
+                }
+            }
+            event.model.set('item.selected', !event.model.item.selected)
+            let item = this.$.boxesList.itemForElement(event.target);
+            this.$.selector.select(item);
+        }
+        addBox() {
+            this.push('boxes', { selected: false })
         }
         static get is() { return 'comic-strip'; }
         static get properties() {
             return {
                 id: String,
-                stripBoxes: Object,
+                stripBoxes: Array,
             };
         }
     }
